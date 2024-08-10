@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           exit();
       } else {
           $_SESSION['errors'][] = 'Invalid email or password!';
-          header('Location: login.php');
+          header('Location: index.php');
           exit();
       }
     }
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       foreach ($_SESSION['errors'] as $error) {
         echo "<p style='color:red;'>$error</p>";
       }
-      header('Location: login.php');
+      header('Location: index.php');
       exit();
     }
 
