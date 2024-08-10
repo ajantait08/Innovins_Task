@@ -98,14 +98,6 @@ The screenshot of the working mail functionality has also been attached , in the
 - OTPs are stored with an expiry time to prevent reuse.
 - Sessions are used to manage user authentication status.
 
-## Contributing
-
-If you would like to contribute to this project, please fork the repository and create a pull request with your changes.
-
-## License
-
-This project is open-source and available under the MIT License.
-
 ## Contact
 
 For any inquiries, please contact [ajanta.ghosh08@gmail.com].
