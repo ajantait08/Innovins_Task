@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if($conn->query("UPDATE users_task2 SET password = $new_password, reset_token = NULL, reset_token_expiry = NULL WHERE id = '$id'"))
         {
           $_SESSION['message'] = 'Password reset successful!,please login';
-          header('Location: login.php');
+          header('Location: index.php');
         }
     } else {
         $_SESSION['errors'][] = 'Invalid OTP or OTP expired!';
