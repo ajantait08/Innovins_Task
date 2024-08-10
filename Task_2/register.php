@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="btn btn-primary" type="submit">Submit</button>
               </form>
 
-              <p class="text-center text-muted mt-5 mb-0" style="font-weight:bold">Have already an account? <a href="login.php"
+              <p class="text-center text-muted mt-5 mb-0" style="font-weight:bold">Have already an account? <a href="index.php"
                     class="fw-bold text-body"><u>Login here</u></a></p>
 
             </div>
