@@ -4,41 +4,48 @@ require 'db.php'; // Include database connection
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  $_SESSION['errors'] = [];
+  $_SESSION['errors']['register'] = [];
 
     if (empty($_POST["username"])) {
-      $_SESSION['errors'][] = "Username is required.";
+      $_SESSION['errors']['register'][] = "Username is required.";
     } elseif (!preg_match('/^[a-zA-Z0-9 ]*$/', $_POST["username"])) {
-      $_SESSION['errors'][] = "Username must contain only alphanumeric characters with spaces.";
+      $_SESSION['errors']['register'][] = "Username must contain only alphanumeric characters with spaces.";
     }
 
     if (empty($_POST["email"])) {
-      $_SESSION['errors'][] = "Email is required.";
+      $_SESSION['errors']['register'][] = "Email is required.";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-      $_SESSION['errors'][] = "Invalid email format.";
+      $_SESSION['errors']['register'][] = "Invalid email format.";
     }
 
     if (empty($_POST["password"])) {
-      $_SESSION['errors'][] = "Password is required.";
+      $_SESSION['errors']['register'][] = "Password is required.";
     } elseif (strlen($_POST["password"]) < 8) {
-      $_SESSION['errors'][] = "Password must be at least 8 characters long.";
+      $_SESSION['errors']['register'][] = "Password must be at least 8 characters long.";
     } elseif (!preg_match('/^[a-zA-Z0-9!@]+$/', $_POST["password"])) {
-      $_SESSION['errors'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
+      $_SESSION['errors']['register'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
     }
 
-    if (empty($_SESSION['errors'])) {
+    if (empty($_SESSION['errors']['register'])) {
     $username = $_POST['username'];
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hashing password
+    // check if the email already exists
+    $result = $conn->query("select * from users_task2 where email = '$email'");
+    if($result->num_rows > 0){
+      $_SESSION['errors']['register'][] = 'Email already exists';
+    }
+    else {
     // Insert user into database
     if($conn->query("INSERT INTO users_task2 (username, email, password) VALUES ('$username', '$email', '$password')")){
         $_SESSION['message'] = 'User Registration successful!';
     } else {
-        $_SESSION['errors'][] = 'Registration failed!';
+        $_SESSION['errors']['register'][] = 'Registration failed!';
+    }
     }
     }
     else {
-      foreach ($_SESSION['errors'] as $error) {
+      foreach ($_SESSION['errors']['register'] as $error) {
         echo "<p style='color:red;'>$error</p>";
       }
     }
@@ -133,10 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             <h2 class="text-uppercase text-center mb-2"><u>Register</u></h2>
-            <?php if(!empty($_SESSION['errors'])) { ?>
+            <?php if(!empty($_SESSION['errors']['register'])) { ?>
                 <ul class="mb-5" style="list-style: none;background-color: #ac3030;color:white;padding: 5px 5px 5px 14px;font-weight: 600;font-size: 12px;border-radius: 6px;">
                 <span>SOMETHING WENT WRONG !!</span>
-                <?php $i = 1; foreach ($_SESSION['errors'] as $value) { ?>
+                <?php $i = 1; foreach ($_SESSION['errors']['register'] as $value) { ?>
 
                         <li><?php echo $i.".".$value; ?></li>
                       <?php $i++; } ?>

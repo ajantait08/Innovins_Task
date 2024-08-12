@@ -4,23 +4,23 @@ require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $_SESSION['errors'] = [];
+    $_SESSION['errors']['login'] = [];
 
     if (empty($_POST["email"])) {
-      $_SESSION['errors'][] = "Email is required.";
+      $_SESSION['errors']['login'][] = "Email is required.";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-      $_SESSION['errors'][] = "Invalid email format.";
+      $_SESSION['errors']['login'][] = "Invalid email format.";
     }
 
     if (empty($_POST["password"])) {
-      $_SESSION['errors'][] = "Password is required.";
+      $_SESSION['errors']['login'][] = "Password is required.";
     } elseif (strlen($_POST["password"]) < 8) {
-      $_SESSION['errors'][] = "Password must be at least 8 characters long.";
+      $_SESSION['errors']['login'][] = "Password must be at least 8 characters long.";
     } elseif (!preg_match('/^[a-zA-Z0-9!@]+$/', $_POST["password"])) {
-      $_SESSION['errors'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
+      $_SESSION['errors']['login'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
     }
 
-    if (empty($_SESSION['errors'])) {
+    if (empty($_SESSION['errors']['login'])) {
       $email = $_POST['email'];
       $password = $_POST['password'];
 
@@ -34,13 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           header('Location: dashboard.php');
           exit();
       } else {
-          $_SESSION['errors'][] = 'Invalid email or password!';
+          $_SESSION['errors']['login'][] = 'Invalid email or password!';
           header('Location: index.php');
           exit();
       }
     }
     else {
-      foreach ($_SESSION['errors'] as $error) {
+      foreach ($_SESSION['errors']['login'] as $error) {
         echo "<p style='color:red;'>$error</p>";
       }
       header('Location: index.php');
@@ -122,10 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             <h2 class="text-uppercase text-center mb-2"><u>Login</u></h2>
-            <?php if(!empty($_SESSION['errors'])) { ?>
+            <?php if(!empty($_SESSION['errors']['login'])) { ?>
                 <ul class="mb-5" style="list-style: none;background-color: #ac3030;color:white;padding: 5px 5px 5px 14px;font-weight: 600;font-size: 12px;border-radius: 6px;">
                 <span>SOMETHING WENT WRONG !!</span>
-                <?php $i = 1; foreach ($_SESSION['errors'] as $value) { ?>
+                <?php $i = 1; foreach ($_SESSION['errors']['login'] as $value) { ?>
                         <li><?php echo $i.".".$value; ?></li>
                       <?php $i++; } ?>
                       </ul>

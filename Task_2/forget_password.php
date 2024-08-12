@@ -4,13 +4,13 @@ require 'db.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $_SESSION['errors'] = [];
+    $_SESSION['errors']['forget_password'] = [];
     if (empty($_POST["email"])) {
-      $_SESSION['errors'][] = "Email is required.";
+      $_SESSION['errors']['forget_password'][] = "Email is required.";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-      $_SESSION['errors'][] = "Invalid email format.";
+      $_SESSION['errors']['forget_password'][] = "Invalid email format.";
     }
-    if (empty($_SESSION['errors'])) {
+    if (empty($_SESSION['errors']['forget_password'])) {
     $email = $_POST['email'];
     $sql = "SELECT * FROM users_task2 WHERE email = '$email'";
     $result = $conn->query($sql);
@@ -74,20 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Send email
             if(!mail($to,$subject,$message,$headers)) {
-              $_SESSION['errors'][] =  'Message could not be sent. Mailer Error: ';
+              $_SESSION['errors']['forget_password'][] =  'Message could not be sent.';
             } else {
               $_SESSION['message'] = 'OTP to reset your password has been to your email!';
             }
           }
           else {
-          $_SESSION['errors'][] = 'Sorry some error occured while saving the data!';
+          $_SESSION['errors']['forget_password'][] = 'Sorry some error occured while saving the data!';
           }
         } else {
-            $_SESSION['errors'][] = 'Email not found!';
+            $_SESSION['errors']['forget_password'][] = 'Email not found!';
         }
     }
     else {
-      foreach ($_SESSION['errors'] as $error) {
+      foreach ($_SESSION['errors']['forget_password'] as $error) {
         echo "<p style='color:red;'>$error</p>";
       }
     }
@@ -153,10 +153,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             <h2 class="text-center mb-2"><u>FORGET PASSWORD</u></h2>
-            <?php if(!empty($_SESSION['errors'])) { ?>
+            <?php if(!empty($_SESSION['errors']['forget_password'])) { ?>
                 <ul class="mb-5" style="list-style: none;background-color: #ac3030;color:white;padding: 5px 5px 5px 14px;font-weight: 600;font-size: 12px;border-radius: 6px;">
                 <span>SOMETHING WENT WRONG !!</span>
-                <?php $i = 1; foreach ($_SESSION['errors'] as $value) { ?>
+                <?php $i = 1; foreach ($_SESSION['errors']['forget_password'] as $value) { ?>
 
                         <li><?php echo $i.".".$value; ?></li>
                       <?php $i++; } ?>

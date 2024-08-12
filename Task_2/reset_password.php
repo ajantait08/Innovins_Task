@@ -4,31 +4,31 @@ require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $_SESSION['errors'] = [];
+    $_SESSION['errors']['reset_password'] = [];
 
     if (empty($_POST["email"])) {
-      $_SESSION['errors'][] = "Email is required.";
+      $_SESSION['errors']['reset_password'][] = "Email is required.";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-      $_SESSION['errors'][] = "Invalid email format.";
+      $_SESSION['errors']['reset_password'][] = "Invalid email format.";
     }
 
     if (empty($_POST["password"])) {
-      $_SESSION['errors'][] = "Password is required.";
+      $_SESSION['errors']['reset_password'][] = "Password is required.";
     } elseif (strlen($_POST["password"]) < 8) {
-      $_SESSION['errors'][] = "Password must be at least 8 characters long.";
+      $_SESSION['errors']['reset_password'][] = "Password must be at least 8 characters long.";
     } elseif (!preg_match('/^[a-zA-Z0-9!@]+$/', $_POST["password"])) {
-      $_SESSION['errors'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
+      $_SESSION['errors']['reset_password'][] = "Password must contain only alphanumeric characters and !@ as special characters.";
     }
     if (empty($_POST["otp"])) {
-      $_SESSION['errors'][] = "OTP is required.";
+      $_SESSION['errors']['reset_password'][] = "OTP is required.";
     } elseif (strlen($_POST["otp"]) !== 4 || !ctype_digit($_POST["otp"])) {
-      $_SESSION['errors'][] = "Invalid OTP format.";
+      $_SESSION['errors']['reset_password'][] = "Invalid OTP format.";
     }
 
-    if (empty($_SESSION['errors'])) {
+    if (empty($_SESSION['errors']['reset_password'])) {
       $email = $_POST['email'];
-    $otp = $_POST['otp'];
-    $new_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+      $otp = $_POST['otp'];
+      $new_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
     // Fetch user and verify OTP
     $result = $conn->query("SELECT id, reset_token, reset_token_expiry FROM users_task2 WHERE email = '$email'");
@@ -38,18 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && $otp === $user['reset_token'] && strtotime($user['reset_token_expiry']) > time()) {
 
-        if($conn->query("UPDATE users_task2 SET password = $new_password, reset_token = NULL, reset_token_expiry = NULL WHERE id = '$id'"))
+        $sql = "UPDATE users_task2 SET password = '$new_password', reset_token = NULL, reset_token_expiry = NULL WHERE id = $id";
+        if($conn->query($sql))
         {
           $_SESSION['message'] = 'Password reset successful!,please login';
           header('Location: index.php');
         }
     } else {
-        $_SESSION['errors'][] = 'Invalid OTP or OTP expired!';
+        $_SESSION['errors']['reset_password'][] = 'Invalid OTP or OTP expired!';
         header('Location: reset_password.php');
     }
     }
     else {
-      foreach ($_SESSION['errors'] as $error) {
+      foreach ($_SESSION['errors']['reset_password'] as $error) {
         echo "<p style='color:red;'>$error</p>";
       }
       header('Location: reset_password.php');
@@ -136,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             <h2 class="text-center mb-2"><u>RESET PASSWORD</u></h2>
-            <?php if(!empty($_SESSION['errors'])) { ?>
+            <?php if(!empty($_SESSION['errors']['reset_password'])) { ?>
                 <ul class="mb-5" style="list-style: none;background-color: #ac3030;color:white;padding: 5px 5px 5px 14px;font-weight: 600;font-size: 12px;border-radius: 6px;">
                 <span>SOMETHING WENT WRONG !!</span>
                 <?php $i = 1; foreach ($_SESSION['errors'] as $value) { ?>
